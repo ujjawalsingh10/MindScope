@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: src
+Version: 0.0.1
+Summary: An MLOps project on Mental Health
+Author: Ujjawal Singh
+Author-email: Ujjawal Singh <iamujjawal10.us@gmail.com>
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Dynamic: author

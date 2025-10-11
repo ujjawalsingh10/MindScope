@@ -1,0 +1,20 @@
+pandas
+ipykernel
+numpy
+matplotlib
+plotly
+seaborn
+scikit-learn
+pymongo
+from_root
+certifi
+PyYAML
+boto3
+fastapi
+python-multipart
+uvicorn
+jinja2
+imblearn
+python-dotenv
+tqdm
+-e .

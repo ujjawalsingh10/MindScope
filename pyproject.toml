@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "src"
+version = "0.0.1"
+description = "An MLOps project on Mental Health"
+authors = [
+    { name = "Ujjawal Singh", email = "iamujjawal10.us@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
