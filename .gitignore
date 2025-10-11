@@ -1,4 +1,5 @@
 .env
 confid.txt
 mindscope
+src.egg-info
 notebook/*.csv
