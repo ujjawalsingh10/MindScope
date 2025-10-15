@@ -3,3 +3,6 @@ confid.txt
 mindscope
 src.egg-info
 notebook/*.csv
+artifact
+logs
+**/__pycache__/
