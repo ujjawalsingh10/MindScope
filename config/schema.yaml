@@ -1,0 +1,45 @@
+columns:
+  - Name: category
+  - Gender: category
+  - Age: float
+  - City: category
+  - Working Professional or Student: category
+  - Profession: category
+  - Academic Pressure: float
+  - Work Pressure: float
+  - CGPA: float
+  - Study Satisfaction: float
+  - Job Satisfaction: float
+  - Sleep Duration: category
+  - Dietary Habits: category
+  - Degree: category
+  - Have you ever had suicidal thoughts ?: category
+  - Work/Study Hours: float
+  - Financial Stress: float
+  - Family History of Mental Illness: category
+  - Depression: int
+
+numerical_columns:
+  - Age
+  - Academic Pressure 
+  - Work Pressure 
+  - CGPA
+  - Study Satisfaction 
+  - Job Satisfaction 
+  - Work/Study Hours
+  - Financial Stress 
+  - Depression
+
+categorical_columns:
+  - Name 
+  - Gender 
+  - City 
+  - Working Professional or Student
+  - Profession 
+  - Sleep Duration 
+  - Dietary Habits 
+  - Degree
+  - Have you ever had suicidal thoughts ?
+  - Family History of Mental Illness
+
+target_column: Depression

@@ -6,3 +6,5 @@ notebook/*.csv
 artifact
 logs
 **/__pycache__/
+test.py
+zz.yaml
