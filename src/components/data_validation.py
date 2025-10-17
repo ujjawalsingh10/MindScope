@@ -85,4 +85,54 @@ class DataValidation:
                                  DataValidation.read_data(file_path=self.data_ingestion_artifact.test_file_path))
 
             ## check col len of DataFrame for train/test df
+            status = self.validate_numer_of_columns(dataframe=train_df)
+            if not status:
+                validation_error_msg += f'Columns are missing in training dataframe'
+            else:
+                logging.info(f'All required columns present in training dataframe: {status}')
             
+            status = self.validate_numer_of_columns(dataframe=test_df)
+            if not status:
+                validation_error_msg += f"Columns not present in testing dataframe: {status}"
+            else:
+                logging.info(f"All required columns present in testing dataframe")
+            
+            # Validating col dtype for train/test df
+            status = self.is_column_exist(df=train_df)
+            if not status:
+                validation_error_msg += f"Columns are missing in training dataframe. "
+            else:
+                logging.info(f"All categorical/int columns present in training dataframe: {status}")
+
+            status = self.is_column_exist(df=test_df)
+            if not status:
+                validation_error_msg += f"Columns are missing in test dataframe."
+            else:
+                logging.info(f"All categorical/int columns present in testing dataframe: {status}")
+            
+            validation_status = len(validation_error_msg) == 0
+
+            data_validation_artifact = DataValidationArtifact(
+                validation_status=validation_status,
+                message=validation_error_msg,
+                validation_report_file_path=self.data_validation_config.validation_report_file_path
+            )
+
+            ## ensure the directory for validation_report_file_path_exists
+            report_dir = os.path.dirname(self.data_validation_config.validation_report_file_path)
+            os.makedirs(report_dir, exist_ok=True)
+
+            ## save validation status and message to json file
+            validation_report = {
+                'validation_status': validation_status,
+                'message': validation_error_msg.strip()
+            }
+
+            with open(self.data_validation_config.validation_report_file_path, 'w') as f:
+                json.dump(validation_report, f, indent=4)
+            
+            logging.info('Data validation artifact created and saved to JSON file.')
+            logging.info(f"Data Validation artifact: {data_validation_artifact}")
+            return data_validation_artifact
+        except Exception as e:
+            raise MyException(e, sys) from e
