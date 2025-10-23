@@ -1,4 +1,5 @@
 columns:
+  - id: int
   - Name: category
   - Gender: category
   - Age: float
@@ -20,6 +21,7 @@ columns:
   - Depression: int
 
 numerical_columns:
+  - int
   - Age
   - Academic Pressure 
   - Work Pressure 
@@ -41,5 +43,7 @@ categorical_columns:
   - Degree
   - Have you ever had suicidal thoughts ?
   - Family History of Mental Illness
+
+drop_columns: id
 
 target_column: Depression

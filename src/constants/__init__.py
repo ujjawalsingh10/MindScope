@@ -11,7 +11,7 @@ ARTIFACT_DIR: str = 'artifact'
 
 MODEL_FILE_NAME = 'model.pkl'
 
-TARGET_COLUMN = 'Response'
+TARGET_COLUMN = 'Depression'
 CURRENT_YEAR = date.today().year
 PREPROCESSING_OBJECT_FILE_NAME = 'preprocessing.pkl'
 
@@ -34,3 +34,10 @@ Data Validation related constant
 """
 DATA_VALIDATION_DIR_NAME: str = 'data_validation'
 DATA_VALIDATION_REPORT_FILE_NAME: str = 'report.yaml'
+
+"""
+Data Transformation related constants
+"""
+DATA_TRANSFORMATION_DIR_NAME: str = 'data_transformation'
+DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = 'transformed'
+DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR: str = 'transformed_object'
