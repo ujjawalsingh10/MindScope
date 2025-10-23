@@ -21,7 +21,7 @@ columns:
   - Depression: int
 
 numerical_columns:
-  - int
+  # - id
   - Age
   - Academic Pressure 
   - Work Pressure 

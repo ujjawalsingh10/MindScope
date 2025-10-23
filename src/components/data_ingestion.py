@@ -58,6 +58,11 @@ class DataIngestion:
             os.makedirs(dir_path, exist_ok=True)
 
             logging.info(f'Exporting train and test file path')
+            train_set = train_set.drop('_id', axis=1)
+            # logging.info(f"Current columns in the Train Dataset: {train_set.columns}")
+            test_set = test_set.drop('_id', axis=1)
+            # logging.info(f"Current columns in the Test Dataset: {test_set.columns}")
+
             train_set.to_csv(self.data_ingestion_config.training_file_path, index=False, header=True)
             test_set.to_csv(self.data_ingestion_config.testing_file_path, index=False, header=True)
 

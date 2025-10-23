@@ -5,4 +5,4 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from src.exception import MyException
 from src.logger import logging
 from src.utils.main_utils import load_object, save_object, load_numpy_array_data
-from src.entity.config_entity import ModelTrainingConfig
+from src.entity.config_entity import ModelTrainerConfig

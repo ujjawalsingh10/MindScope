@@ -52,7 +52,7 @@ class DataTransformation:
             # categorical transformer
             categorical_transformer = Pipeline(steps=[
                 ('imputer', SimpleImputer(strategy='most_frequent')),
-                ('onehot', OneHotEncoder(handle_unknown='ignore', sparse=False))
+                ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=True))
             ])
 
             preprocessor = ColumnTransformer(transformers=[
@@ -263,6 +263,10 @@ class DataTransformation:
             if 'Name' in train_df.columns:
                 train_df = train_df.drop(columns=['Name'])
             if 'Name' in test_df.columns:
+                test_df = test_df.drop(columns=['Name'])
+            if 'id' in train_df.columns:
+                train_df = train_df.drop(columns=['Name'])
+            if 'id' in test_df.columns:
                 test_df = test_df.drop(columns=['Name'])
 
             # split inputs and target

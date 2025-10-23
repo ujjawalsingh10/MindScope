@@ -29,7 +29,7 @@ class DataValidation:
         Output: Returns bool value based on validation results
         """
         try:
-            status = len(dataframe.columns) == len(self.schema_config['columns'])
+            status = len(dataframe.columns) == len(self._schema_config['columns'])
             logging.info(f"Required number of columns present: [{status}]")
             return status
         except Exception as e:
