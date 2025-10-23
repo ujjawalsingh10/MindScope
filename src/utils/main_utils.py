@@ -39,7 +39,7 @@ def load_object(file_path: str) -> object:
     except Exception as e:
         raise MyException(e, sys) from e
 
-def save_numpy_array_data(file_path: str, array: np.array):
+def save_numpy_array(file_path: str, array: np.array):
     """
     Save numpy array data to file
     """

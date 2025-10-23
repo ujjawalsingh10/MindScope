@@ -3,11 +3,13 @@ import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 
 from src.constants import SCHEMA_FILE_PATH, TARGET_COLUMN, CURRENT_YEAR
 from src.entity.config_entity import DataTransformationConfig
 from src.entity.artifact_entity import DataTransformationArtifact, DataIngestionArtifact, DataValidationArtifact
-from src.utils.main_utils import read_yaml_file
+from src.utils.main_utils import read_yaml_file, save_object, save_numpy_array
 from src.exception import MyException
 from src.logger import logging
 
@@ -30,7 +32,7 @@ class DataTransformation:
         except Exception as e:
             raise MyException(e,sys)
     
-    def get_data_transformer_object(self) -> Pipeline:
+    def get_data_transformer_object(self, X_train) -> Pipeline:
         """
         Creates and returns a data transformer object for the data
         """
@@ -38,10 +40,31 @@ class DataTransformation:
 
         try:
             # initialize transformers
-            ##--------------------------
 
             #load schema configurations
-            num_features = self._schema_config['num_features']
+            num_features = X_train.select_dtypes(include=np.number).columns.tolist()
+            cat_features = X_train.select_dtypes(exclude=np.number).columns.tolist()
+            
+            # numeric transformer
+            numeric_steps = [('imputer', SimpleImputer(strategy='median'))]
+            numeric_transformer = Pipeline(steps=numeric_steps)
+
+            # categorical transformer
+            categorical_transformer = Pipeline(steps=[
+                ('imputer', SimpleImputer(strategy='most_frequent')),
+                ('onehot', OneHotEncoder(handle_unknown='ignore', sparse=False))
+            ])
+
+            preprocessor = ColumnTransformer(transformers=[
+                ('num', numeric_transformer, num_features),
+                ('cat', categorical_transformer, cat_features)
+            ], remainder='drop', sparse_threshold=0)
+
+            logging.info(f'Preprocessor created. Numeric cols: {num_features} | Categorical cols: {cat_features}')
+            return preprocessor
+        
+        except Exception as e:
+            raise MyException(e, sys)
     
     def _drop_id_column(self, df):
         """ Drop the id column if it exists"""
@@ -236,4 +259,51 @@ class DataTransformation:
             train_df = self._map_sleep_duration(train_df, train_df)
             test_df = self._map_sleep_duration(test_df, train_df)
 
-            # logging.info('All transformations completed successfully.')
+             # 6. drop 'Name' if present (not used as feature)
+            if 'Name' in train_df.columns:
+                train_df = train_df.drop(columns=['Name'])
+            if 'Name' in test_df.columns:
+                test_df = test_df.drop(columns=['Name'])
+
+            # split inputs and target
+            if  TARGET_COLUMN not in train_df.columns:
+                raise Exception(f"Target column '{TARGET_COLUMN}' not present in train data")
+            X_train = train_df.drop(columns = [TARGET_COLUMN])
+            y_train = train_df[TARGET_COLUMN]
+
+            X_test = test_df.drop(columns = [TARGET_COLUMN]) if TARGET_COLUMN in test_df.columns else test_df.copy()
+            y_test = test_df[TARGET_COLUMN].values if TARGET_COLUMN in test_df.columns else None
+
+            ##### Tranformer and transforms
+            logging.info('Starting data transformation')
+            preprocessor = self.get_data_transformer_object(X_train)
+            logging.info('Got the preprocessor object')
+
+            logging.info('Initializing tranformation for training data')
+            X_train_arr = preprocessor.fit_transform(X_train)
+            logging.info('Initializing tranformation for testing data')
+            X_test_arr = preprocessor.transform(X_test)
+            logging.info('Transformation done to Train and test df')
+
+            train_arr = np.c_[X_train_arr, np.array(y_train)]
+            if y_test is not None:
+                test_arr = np.c_[X_test_arr, np.array(y_test)]
+            else:
+                test_arr = X_test_arr
+            logging.info('feature target concatentation done for train-test df')
+
+            save_object(self.data_transformation_config.transformed_object_file_path, preprocessor)
+            save_numpy_array(self.data_transformation_config.transformed_train_file_path, array=train_arr)
+            save_numpy_array(self.data_transformation_config.transformed_test_file_path, array=test_arr)
+            logging.info('Saving transformation object and transformed files.')
+
+            logging.info('Data Transformation completed successfully')
+            return DataTransformationArtifact(
+                transformed_object_file_path=self.data_transformation_config.transformed_object_file_path,
+                transformed_train_file_path=self.data_transformation_config.transformed_train_file_path,
+                transformed_test_file_path=self.data_transformation_config.transformed_test_file_path
+            )
+        except Exception as e:
+            raise MyException(e, sys) from e
+
+
