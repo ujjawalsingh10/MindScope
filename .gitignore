@@ -7,4 +7,5 @@ artifact
 logs
 **/__pycache__/
 test.py
+mindscope-mlops_accessKeys.csv
 zz.yaml
