@@ -4,7 +4,7 @@ from src.entity.estimator import MyModel
 import sys
 import pandas as pd
 
-class Proj1Estimator:
+class ProjEstimator:
     """
     This class is used to save and retrieve our model from s3 bucket and to do prediction
     """
