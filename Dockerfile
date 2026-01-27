@@ -1,21 +1,15 @@
-FROM python:3.10-slim
+FROM python:3.10-slim-buster
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Install system dependencies (optional but safe)
-RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+# Copy your application code
+COPY . /app
 
-# Copy requirements first (for caching)
-COPY requirements.txt .
+# Install the dependencies
+RUN pip install -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy full project
-COPY . .
-
-# Expose FastAPI port
+# Expose the port FastAPI will run on
 EXPOSE 5000
 
 # Run app using uvicorn
