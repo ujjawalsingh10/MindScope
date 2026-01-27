@@ -49,45 +49,52 @@ jobs:
 # DEPLOY TO EC2
 # ========================
   deploy:
-    name: Deploy to EC2
-    needs: build
-    runs-on: self-hosted
+  name: Deploy to EC2
+  needs: build
+  runs-on: self-hosted
 
-    steps:
+  steps:
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
-
-
-      - name: Stop Old Container
-        run: |
-          docker stop mindscope || true
-          docker rm mindscope || true
-
-
-      - name: Pull Latest Image
-        env:
-          REGISTRY: ${{ secrets.ECR_REGISTRY }}
-          REPO: ${{ secrets.ECR_REPO }}
-
-        run: |
-          docker pull $REGISTRY/$REPO:latest
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
 
-      - name: Run New Container
-        env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+    - name: Stop Old Container
+      run: |
+        docker stop mindscope || true
+        docker rm mindscope || true
 
-        run: |
-          docker run -d \
-            --name mindscope \
-            -p 5000:5000 \
-            -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-            -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-            -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
-            -e MONGODB_URL=$MONGODB_URL \
-            ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO }}:latest
+
+    - name: Pull Latest Image
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPO: ${{ secrets.ECR_REPO }}
+
+      run: |
+        docker pull $REGISTRY/$REPO:latest
+
+
+    - name: Run New Container
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        MONGODB_URL: ${{ secrets.MONGODB_URL }}
+
+      run: |
+        docker run -d \
+          --name mindscope \
+          -p 5000:5000 \
+          -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+          -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+          -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+          -e MONGODB_URL=$MONGODB_URL \
+          ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO }}:latest
