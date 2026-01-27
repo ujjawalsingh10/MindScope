@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from src.constants import APP_HOST, APP_PORT
 from src.pipeline.prediction_pipeline import (
     MentalHealthData,
     MentalHealthPredictor
@@ -173,7 +174,7 @@ if __name__ == "__main__":
 
     uvicorn.run(
         "app:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
+        host=APP_HOST,
+        port=APP_PORT,
+        # reload=True
     )
