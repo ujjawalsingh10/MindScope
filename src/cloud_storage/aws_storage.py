@@ -4,7 +4,7 @@ from io import StringIO
 from typing import Union,List
 import os,sys
 from src.logger import logging
-from mypy_boto3_s3.service_resource import Bucket
+# from mypy_boto3_s3.service_resource import Bucket
 from src.exception import MyException
 from botocore.exceptions import ClientError
 from pandas import DataFrame,read_csv
@@ -71,7 +71,7 @@ class SimpleStorageService:
         except Exception as e:
             raise MyException(e, sys) from e
 
-    def get_bucket(self, bucket_name: str) -> Bucket:
+    def get_bucket(self, bucket_name: str):
         """
         Retrieves the S3 bucket object based on the provided bucket name.
 

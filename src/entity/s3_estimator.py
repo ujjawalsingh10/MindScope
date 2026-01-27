@@ -26,7 +26,7 @@ class ProjEstimator:
             print(e)
             return False
     
-    def load_model(self, ) -> MyModel:
+    def load_model(self, ):
         """
         Load the model from the model_path
         """

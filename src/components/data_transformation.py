@@ -105,14 +105,14 @@ class DataTransformation:
         if 'Work Pressure' in df.columns and 'Academic Pressure' in df.columns:
             df['Pressure'] = df['Work Pressure'].combine_first(df['Academic Pressure'])
             df.drop(['Work Pressure', 'Academic Pressure'], axis=1, inplace=True)
-            logging.info("Combined Work & Academic Pressure → Pressure")
+            logging.info("Combined Work & Academic Pressure -> Pressure")
         return df
     
     def _fill_cgpa_values(self, df, student_mean=None):
         """
         Fill CGPA:
-        - Working Professionals → 0
-        - Students → mean of Student CGPA (calculated on train)
+        - Working Professionals -> 0
+        - Students -> mean of Student CGPA (calculated on train)
         """
         if student_mean is None:
             student_mean = df.loc[df['Working Professional or Student'] == 'Student', 'CGPA'].mean()
@@ -142,7 +142,7 @@ class DataTransformation:
     def _map_city_values(self, df, reference_df):
         value_count = reference_df["City"].value_counts()
         df['City'] = df['City'].map(lambda x: x if value_count.get(x, 0) >= 10 else 'other')
-        logging.info("Mapped rare City values → 'other'")
+        logging.info("Mapped rare City values -> 'other'")
         return df
     
     def _map_dietary_habits(self, df, reference_df):
@@ -265,9 +265,9 @@ class DataTransformation:
             if 'Name' in test_df.columns:
                 test_df = test_df.drop(columns=['Name'])
             if 'id' in train_df.columns:
-                train_df = train_df.drop(columns=['Name'])
+                train_df = train_df.drop(columns=['id'])
             if 'id' in test_df.columns:
-                test_df = test_df.drop(columns=['Name'])
+                test_df = test_df.drop(columns=['id'])
 
             # split inputs and target
             if  TARGET_COLUMN not in train_df.columns:
