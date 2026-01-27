@@ -8,4 +8,8 @@ logs
 **/__pycache__/
 test.py
 mindscope-mlops_accessKeys.csv
+mindscope-ci-user_accessKeys.csv
+toprep.txt
 zz.yaml
+test_aws.py
+test_prediction.py

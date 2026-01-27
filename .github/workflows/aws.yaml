@@ -1,0 +1,93 @@
+name: Deploy MindScope Application Image to EC2 instance
+
+on:
+  push:
+    branches: [ main ]
+
+
+jobs:
+
+# ========================
+# BUILD + PUSH TO ECR
+# ========================
+  build:
+    name: Build and Push Image
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+
+      - name: Build and Push Image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO: ${{ secrets.ECR_REPO }}
+          TAG: latest
+
+        run: |
+          docker build -t $REGISTRY/$REPO:$TAG .
+          docker push $REGISTRY/$REPO:$TAG
+
+
+
+# ========================
+# DEPLOY TO EC2
+# ========================
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+
+      - name: Stop Old Container
+        run: |
+          docker stop mindscope || true
+          docker rm mindscope || true
+
+
+      - name: Pull Latest Image
+        env:
+          REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          REPO: ${{ secrets.ECR_REPO }}
+
+        run: |
+          docker pull $REGISTRY/$REPO:latest
+
+
+      - name: Run New Container
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+
+        run: |
+          docker run -d \
+            --name mindscope \
+            -p 5000:5000 \
+            -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+            -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+            -e MONGODB_URL=$MONGODB_URL \
+            ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPO }}:latest

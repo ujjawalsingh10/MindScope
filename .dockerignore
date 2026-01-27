@@ -1,0 +1,51 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+mindscope/
+.mindscope/
+env/
+venv/
+.venv/
+
+# Environment variables
+.env
+
+# Git
+.git
+.gitignore
+
+# Logs
+logs/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+notebook/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Tests & dev files
+test_aws.py
+test_prediction.py
+toprep.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files
+Dockerfile~
+docker-compose.yml~
+
+# Artifacts (ONLY if loading from S3)
+artifact/
+
+mindscope-ci-user_accessKeys.csv
+mindscope-mlops_accessKeys.csv
