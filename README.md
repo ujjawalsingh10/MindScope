@@ -1,6 +1,11 @@
-
-
 # 🧠 MindScope-ML — Mental Health Prediction System
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Framework-green)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![AWS](https://img.shields.io/badge/AWS-Cloud-orange)
+![CI/CD](https://img.shields.io/badge/GitHub_Actions-CI/CD-black)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 
 MindScope-ML is an end-to-end Machine Learning system for predicting depression risk using demographic, academic, and lifestyle data.
 The project originated from a Kaggle competition and was later extended into a full production-grade ML pipeline with automated deployment.
